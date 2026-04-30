@@ -1,0 +1,88 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+void addToFront(Node*& head, int val) {
+    Node* n = new Node{val, head};
+    head = n;
+}
+
+void addToBack(Node*& head, Node*& tail, int val) {
+    Node* n = new Node{val, nullptr};
+    if (!tail) { head = tail = n; return; }
+    tail->next = n;
+    tail = n;
+}
+
+void addToMiddle(Node*& head, int val) {
+    if (!head) { head = new Node{val, nullptr}; return; }
+    int len = 0;
+    Node* cur = head;
+    while (cur) { len++; cur = cur->next; }
+    int mid = len / 2;
+    cur = head;
+    for (int i = 0; i < mid - 1; i++) cur = cur->next;
+    Node* n = new Node{val, cur->next};
+    cur->next = n;
+}
+
+void print(Node* head) {
+    while (head) { cout << head->data << " "; head = head->next; }
+    cout << endl;
+}
+
+double average(Node* head) {
+    double sum = 0; int cnt = 0;
+    while (head) { sum += head->data; cnt++; head = head->next; }
+    return cnt ? sum / cnt : 0;
+}
+
+void deleteFirstEven(Node*& head) {
+    if (!head) return;
+    if (head->data % 2 == 0) {
+        Node* tmp = head;
+        head = head->next;
+        delete tmp;
+        return;
+    }
+    Node* cur = head;
+    while (cur->next && cur->next->data % 2 != 0) cur = cur->next;
+    if (cur->next) {
+        Node* tmp = cur->next;
+        cur->next = tmp->next;
+        delete tmp;
+    }
+}
+
+void freeList(Node*& head) {
+    while (head) {
+        Node* tmp = head;
+        head = head->next;
+        delete tmp;
+    }
+}
+
+int main() {
+    Node* head = nullptr;
+    Node* tail = nullptr;
+
+    addToBack(head, tail, 10);
+    addToBack(head, tail, 20);
+    addToFront(head, 5);
+    addToMiddle(head, 99);
+
+    cout << "List: ";
+    print(head);
+    cout << "Average: " << average(head) << endl;
+
+    deleteFirstEven(head);
+    cout << "After deleting first even: ";
+    print(head);
+
+    freeList(head);
+    return 0;
+}
